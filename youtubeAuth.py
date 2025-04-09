@@ -1,3 +1,10 @@
+"""Authenticates YouTube
+
+Checks if Youtube is already authenticated using pickle token.
+ If so, returns the Youtube build. If not, uses client secret to authenticate, update pickle, then returns YouTube.
+
+"""
+
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 import pickle
@@ -5,13 +12,16 @@ import pickle
 # Define the OAuth 2.0 scope for full YouTube access
 SCOPES = ["https://www.googleapis.com/auth/youtube.force-ssl"]
 
+
 def get_channel_info(youtube):
     request = youtube.channels().list(
         part="snippet,statistics",
-        mine=True  # Get the authenticated user's channel
+        mine=True,  # Get the authenticated user's channel
     )
     response = request.execute()
     print(response)
+
+
 def get_youtube_client():
     """Load stored credentials or re-authenticate."""
     try:
@@ -20,11 +30,11 @@ def get_youtube_client():
         return build("youtube", "v3", credentials=credentials)
     except Exception:
         return authenticate_youtube()
+
+
 def authenticate_youtube():
     """Authenticate and return a YouTube API client."""
-    flow = InstalledAppFlow.from_client_secrets_file(
-        "client_secret.json", SCOPES
-    )
+    flow = InstalledAppFlow.from_client_secrets_file("client_secret.json", SCOPES)
     credentials = flow.run_local_server(port=0)
 
     # Save credentials for future use
