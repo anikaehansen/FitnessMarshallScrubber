@@ -24,17 +24,16 @@
       color: var(--main-green);
       margin-bottom: 0.5rem;
     }
-
+    h2 {
+      text-align: center;
+      font-weight: normal;
+      color: #fff;
+      margin: 1rem 0;
+    }
     h4 {
       text-align: center;
       font-weight: normal;
-      color: #3d3f3b;
-      margin: 1rem 0;
-    }
-    h6 {
-      text-align: center;
-      font-weight: normal;
-      color: #3d3f3b;
+      color: #fff;
       margin: 1rem 0;
     }
 
@@ -75,6 +74,21 @@
 
     button:hover {
       background: #7aa84f;
+    }
+    .search-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 2rem 0;
+    }
+
+    .search-container label,
+    .search-container input,
+    .search-container button {
+      text-align: center;
+      width: 100%;
+      max-width: 500px;
     }
 
     .video {
@@ -118,18 +132,19 @@
   <h4>Include as many search terms wanted, separated by commas</h4>
 
   <h4>Leave both boxes blank to see all playlists</h4>
-  <h6>Search uses text matching, so searching "You" would match "Into you" as well as "Ask and you shall receive"</h6>
+  <h4>Search uses text matching, so searching "You" would match "Into you" as well as "Ask and you shall receive"</h4>
 
   <div class="starline">★ ✦ ★ ✦ ★ ✦ ★ ✦ ★ ✦ ★</div>
 
+<div class="search-container">
   <label for="include">Include Artist(s) or Song(s):</label><br>
-  <input id="include" placeholder="e.g., Rihanna, Nuclear"><br>
+  <input id="include" placeholder="e.g., Rihanna, Charli xcx"><br>
 
   <label for="exclude">Exclude Artist(s) or Song(s):</label><br>
-  <input id="exclude" placeholder="e.g., Selena Gomez, E.T."><br>
+  <input id="exclude" placeholder="e.g., Selena Gomez"><br>
 
   <button id="searchBtn">Search</button>
-
+</div>
   <div id="results"></div>
 
   <div class="starline">✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦</div>
