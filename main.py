@@ -8,6 +8,7 @@ Uses Spotify API to pull artist from the song titles. Creates dictionary of
 video title, video link, list of songs and artists.
 
 """
+import json
 from youtubeAuth import get_channel_info, get_youtube_client
 from musicScrubber import (
     get_playlist_videos,
@@ -21,11 +22,13 @@ def main():
     # Authenticate and create YouTube API client
     youtube = get_youtube_client()
     filtered_comments = process_playlist_and_filter_comments(
-        "PLgcveAkQOd-swcmlzntTcrLGsEQYtv2Vk", youtube
+        "PLAPUEAObdbMaT7qRvjMHRqrFjhl_E0dvS", youtube
     )
     filtered_song_dict = isolate_songs_from_comments(filtered_comments)
     full_song_dict = spotify_artist_get(filtered_song_dict)
-    # TODO: Create json from dictionary and intergrate with ability to search front-end
+    with open("data.json", "w") as f:
+        json.dump(full_song_dict, f)
+    # TODO: Integrate with ability to search front-end
 
 if __name__ == "__main__":
     main()

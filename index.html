@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🎶 Search Fitness Marshall Workout Videos 🎶</title>
+  <style>
+    :root {
+      --main-green: #668d3c;
+      --background: #111;
+      --foreground: #fff;
+    }
+
+    body {
+      margin: 0;
+      padding: 2rem;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--background);
+      color: var(--foreground);
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      color: var(--main-green);
+      margin-bottom: 0.5rem;
+    }
+
+    h4 {
+      text-align: center;
+      font-weight: normal;
+      color: #3d3f3b;
+      margin: 1rem 0;
+    }
+    h6 {
+      text-align: center;
+      font-weight: normal;
+      color: #3d3f3b;
+      margin: 1rem 0;
+    }
+
+    .starline {
+      text-align: center;
+      font-size: 1.5rem;
+      margin: 1.5rem 0;
+      color: #888;
+    }
+
+    label {
+      font-weight: bold;
+      color: var(--main-green);
+    }
+
+    input {
+      padding: 0.6rem;
+      width: 100%;
+      max-width: 500px;
+      margin-bottom: 1rem;
+      border: 1px solid #444;
+      background: #222;
+      color: white;
+      border-radius: 5px;
+    }
+
+    button {
+      padding: 0.6rem 1.5rem;
+      font-size: 1rem;
+      background: var(--main-green);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-bottom: 2rem;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #7aa84f;
+    }
+
+    .video {
+      background: #1b1b1b;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      border-radius: 10px;
+      border-left: 6px solid var(--main-green);
+      transition: transform 0.2s;
+    }
+
+    .video:hover {
+      transform: translateY(-2px);
+    }
+
+    .video a {
+      color: var(--main-green);
+      font-size: 1.2rem;
+      text-decoration: none;
+    }
+
+    .video ul {
+      padding-left: 1.2rem;
+    }
+
+    .video li {
+      margin: 0.2rem 0;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 600px) {
+      input, button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Search Fitness Marshall Workout Videos</h1>
+  <h2>Only includes 30 minutes sessions with official comments, will be updated to be all 30-minute sessions</h2>
+  <h4>Include as many search terms wanted, separated by commas</h4>
+
+  <h4>Leave both boxes blank to see all playlists</h4>
+  <h6>Search uses text matching, so searching "You" would match "Into you" as well as "Ask and you shall receive"</h6>
+
+  <div class="starline">★ ✦ ★ ✦ ★ ✦ ★ ✦ ★ ✦ ★</div>
+
+  <label for="include">Include Artist(s) or Song(s):</label><br>
+  <input id="include" placeholder="e.g., Rihanna, Nuclear"><br>
+
+  <label for="exclude">Exclude Artist(s) or Song(s):</label><br>
+  <input id="exclude" placeholder="e.g., Selena Gomez, E.T."><br>
+
+  <button id="searchBtn">Search</button>
+
+  <div id="results"></div>
+
+  <div class="starline">✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦</div>
+
+  <script>
+    let videos = {};
+
+    fetch('data.json')
+      .then(res => res.json())
+      .then(data => {
+        videos = data;
+        document.getElementById('searchBtn').addEventListener('click', filterVideos);
+        ['include', 'exclude'].forEach(id => {
+          document.getElementById(id).addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') filterVideos();
+          });
+        });
+      })
+      .catch(err => {
+        document.getElementById('results').innerHTML = '<p style="color:red;">Error loading data.json</p>';
+        console.error(err);
+      });
+
+    function filterVideos() {
+      const includeTerms = document.getElementById('include').value.toLowerCase().split(',').map(s => s.trim()).filter(Boolean);
+      const excludeTerms = document.getElementById('exclude').value.toLowerCase().split(',').map(s => s.trim()).filter(Boolean);
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = '';
+
+      for (const [url, entries] of Object.entries(videos)) {
+        const title = entries[0];
+        const songs = entries.slice(1);
+
+        let allTerms = [];
+        for (const [song, artists] of songs) {
+          allTerms.push(song.toLowerCase());
+          allTerms.push(...artists.map(a => a.toLowerCase()));
+        }
+
+        const includes = includeTerms.every(term => allTerms.some(t => t.includes(term)));
+        const excludes = excludeTerms.some(term => allTerms.some(t => t.includes(term)));
+
+        if ((includeTerms.length === 0 || includes) && !excludes) {
+          const div = document.createElement('div');
+          div.className = 'video';
+          div.innerHTML = `<a href="${url}" target="_blank"><strong>${title}</strong></a><br><ul>` +
+            songs.map(([s, a]) => `<li><b>${s}</b> – ${a.join(', ')}</li>`).join('') +
+            `</ul>`;
+          resultsDiv.appendChild(div);
+        }
+      }
+
+      if (resultsDiv.innerHTML === '') {
+        resultsDiv.innerHTML = '<p>No matching videos found.</p>';
+      }
+    }
+  </script>
+</body>
+</html>

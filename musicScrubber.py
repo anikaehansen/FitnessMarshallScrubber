@@ -85,8 +85,11 @@ def process_playlist_and_filter_comments(playlist_id: str, youtube) -> list:
     # Step 2: Get and filter comments for each video
     all_filtered_comments = []
     for video in videos_in_playlist:
-        comments = get_video_comments(video, youtube)
-        all_filtered_comments.extend(comments)
+        try:
+            comments = get_video_comments(video, youtube)
+            all_filtered_comments.extend(comments)
+        except:
+            pass
 
     return all_filtered_comments
 
@@ -95,7 +98,7 @@ def process_playlist_and_filter_comments(playlist_id: str, youtube) -> list:
 def isolate_songs_from_comments(filtered_comments: list) -> dict:
     song_dict = {}
     pattern = r'">.*?<\/a>\s*([^<]+)'
-    exclude_words = ["Stream"]
+    exclude_words = ["Stream", "WATERBREAK"]
     for comment in filtered_comments:
         song_list = re.findall(pattern, comment["comment"])
         for idx, song in enumerate(song_list):
